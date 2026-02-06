@@ -20,7 +20,7 @@ from .data.composed_word import ComposedWord
 from .data.features import (
     calculate_term_features,
     calculate_composed_features,
-    get_feature_aggregation
+    get_feature_aggregation,
 )
 
 # Import utilities
@@ -35,13 +35,13 @@ MAX_NGRAM_SIZE = 3
 
 # Public API (following reference implementation)
 __all__ = [
-    'KeywordExtractor',
-    'DataCore',
-    'SingleWord',
-    'ComposedWord',
-    'calculate_term_features',
-    'calculate_composed_features',
-    'get_feature_aggregation',
-    'pre_filter',
-    'MAX_NGRAM_SIZE',
+    "KeywordExtractor",
+    "DataCore",
+    "SingleWord",
+    "ComposedWord",
+    "calculate_term_features",
+    "calculate_composed_features",
+    "get_feature_aggregation",
+    "pre_filter",
+    "MAX_NGRAM_SIZE",
 ]

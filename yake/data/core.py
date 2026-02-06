@@ -21,6 +21,7 @@ from .composed_word import ComposedWord
 # Configure module logger
 logger = logging.getLogger(__name__)
 
+
 class DataCore:
     """
     Core data representation for document analysis and keyword extraction.
@@ -38,7 +39,7 @@ class DataCore:
         self,
         text: str,
         stopword_set: Set[str],
-        config: Optional[Dict[str, Any]] = None
+        config: Optional[Dict[str, Any]] = None,
     ):
         """
         Initialize the data core for keyword extraction.
@@ -217,7 +218,7 @@ class DataCore:
         sentence: List[str],
         sentence_id: int,
         pos_text: int,
-        context: Dict[str, Any]
+        context: Dict[str, Any],
     ) -> int:
         """
         Process a single sentence from the document.
@@ -236,9 +237,7 @@ class DataCore:
         """
         # Initialize lists to store processed sentence components
         sentence_obj_aux = []  # Blocks of words within the sentence
-        block_of_word_obj = (
-            []
-        )  # Current block of continuous words (separated by punctuation)
+        block_of_word_obj = []  # Current block of continuous words (separated by punctuation)
 
         # Extend the context with sentence information for word processing
         processing_context = context.copy()
@@ -260,7 +259,10 @@ class DataCore:
                 }
                 # Process this word and update position counter
                 pos_text = self._process_word(
-                    word, pos_text, processing_context, word_context
+                    word,
+                    pos_text,
+                    processing_context,
+                    word_context,
                 )
 
         # Save any remaining word block
@@ -334,7 +336,9 @@ class DataCore:
         """
         # Calculate the window of previous words to consider for co-occurrence
         word_windows = list(
-            range(max(0, len(block_of_word_obj) - windows_size), len(block_of_word_obj))
+            range(
+                max(0, len(block_of_word_obj) - windows_size), len(block_of_word_obj)
+            ),
         )
 
         # For each word in the window, update co-occurrence if it's a valid term
@@ -364,9 +368,7 @@ class DataCore:
         # Calculate window of previous words to consider for multi-term candidates
         word_windows = list(
             range(max(0, len(block_of_word_obj) - (n - 1)), len(block_of_word_obj))
-        )[
-            ::-1
-        ]  # Reverse to build phrases from right to left
+        )[::-1]  # Reverse to build phrases from right to left
 
         # Generate multi-term candidates with increasing length
         for w in word_windows:

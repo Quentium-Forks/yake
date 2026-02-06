@@ -34,8 +34,17 @@ class ComposedWord:
 
     # Use __slots__ to reduce memory overhead per instance
     # (optimized to use direct attributes)
-    __slots__ = ('_tags', '_kw', '_unique_kw', '_size', '_terms', '_tf',
-                 '_integrity', '_h', '_start_or_end_stopwords')
+    __slots__ = (
+        "_tags",
+        "_kw",
+        "_unique_kw",
+        "_size",
+        "_terms",
+        "_tf",
+        "_integrity",
+        "_h",
+        "_start_or_end_stopwords",
+    )
 
     def __init__(self, terms: Optional[List[Tuple[str, str, Any]]]):
         """
@@ -227,7 +236,8 @@ class ComposedWord:
         """
         # Get feature configuration from parameters
         features = params.get(
-            "features", ["wfreq", "wrel", "tf", "wcase", "wpos", "wspread"]
+            "features",
+            ["wfreq", "wrel", "tf", "wcase", "wpos", "wspread"],
         )
         _stopword = params.get("_stopword", [True, False])
 
@@ -288,7 +298,8 @@ class ComposedWord:
             for discart_stopword in _stopword:
                 # Calculate aggregate feature metrics
                 (f_sum, f_prod, f_sum_prod) = self.get_composed_feature(
-                    feature_name, discart_stopword=discart_stopword
+                    feature_name,
+                    discart_stopword=discart_stopword,
                 )
 
                 # Add sum feature
@@ -352,7 +363,9 @@ class ComposedWord:
                     # BiWeight: use probabilities of adjacent term connections
 
                     prob_t1 = 0.0
-                    if t > 0 and term_base.g.has_edge(self.terms[t - 1].id, term_base.id):
+                    if t > 0 and term_base.g.has_edge(
+                        self.terms[t - 1].id, term_base.id
+                    ):
                         prob_t1 = (
                             term_base.g[self.terms[t - 1].id][term_base.id]["tf"]
                             / self.terms[t - 1].tf

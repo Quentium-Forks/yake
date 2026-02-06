@@ -13,7 +13,6 @@ DEFAULT_HIGHLIGHT_PRE = "<kw>"
 DEFAULT_HIGHLIGHT_POST = "</kw>"
 
 
-
 class TextHighlighter:
     """
     Class for highlighting keywords in text.
@@ -61,7 +60,7 @@ class TextHighlighter:
             The text with highlighted keywords.
         """
         n_text = ""
-        
+
         if keywords:
             kw_list = keywords
             if isinstance(keywords[0], tuple):
@@ -94,7 +93,8 @@ class TextHighlighter:
                 kw = re.sub(r'[!",:.;?()]$|^[!",:.;?()]|\W[!",:.;?()]', "", token)
                 if kw.lower() in relevant_words_array:
                     text_tokens[tk] = token.replace(
-                        kw, f"{self.highlight_pre}{kw}{self.highlight_post}"
+                        kw,
+                        f"{self.highlight_pre}{kw}{self.highlight_post}",
                     )
         except re.error as e:
             logging.error("Regex error: %s", e)
@@ -122,7 +122,9 @@ class TextHighlighter:
 
         while y < len(text_tokens):
             n_gram_data = self.find_relevant_ngrams(
-                y, text_tokens, relevant_words_array
+                y,
+                text_tokens,
+                relevant_words_array,
             )
 
             n_gram_word_list, splited_n_gram_kw_list = n_gram_data
@@ -134,7 +136,10 @@ class TextHighlighter:
                     "final_splited_text": final_splited_text,
                 }
                 y, new_expression = self.process_ngrams(
-                    text_tokens, y, n_gram_word_list, context
+                    text_tokens,
+                    y,
+                    n_gram_word_list,
+                    context,
                 )
                 final_splited_text.append(new_expression)
             else:
@@ -198,7 +203,8 @@ class TextHighlighter:
 
         if temporary_list_two:
             sorted_temp = sorted(
-                temporary_list_two, key=lambda x: relevant_words_array.index(x.lower())
+                temporary_list_two,
+                key=lambda x: relevant_words_array.index(x.lower()),
             )
             kw_list.append(sorted_temp[0])
             splited_n_gram_word_list.append(kw_list[0].split())
@@ -224,7 +230,9 @@ class TextHighlighter:
         """
         if len(n_gram_word_list[0].split(" ")) == 1:
             position, new_expression = self.replace_token(
-                text_tokens, position, n_gram_word_list
+                text_tokens,
+                position,
+                n_gram_word_list,
             )
         else:
             ctx = self._create_ngram_context(
@@ -234,7 +242,9 @@ class TextHighlighter:
                 context["final_splited_text"],
             )
             position, new_expression = self._process_multi_word_ngrams_helper(
-                text_tokens, position, ctx
+                text_tokens,
+                position,
+                ctx,
             )
 
         return position, new_expression
@@ -291,7 +301,6 @@ class TextHighlighter:
 
         splited_one = n_gram_word_list[0].split()
 
-        
         for idx in range(len(splited_one)):
             if position + idx < len(text_tokens):
                 self._update_kw_list(
@@ -308,13 +317,16 @@ class TextHighlighter:
             return position + 1, text_tokens[position]
 
         min_score_word = min(
-            kw_list, key=lambda x: relevant_words_array.index(x.lower())
+            kw_list,
+            key=lambda x: relevant_words_array.index(x.lower()),
         )
 
         if kw_list.index(min_score_word) == 0:
             term_list = [min_score_word]
             position, new_expression = self.replace_token(
-                text_tokens, position, term_list
+                text_tokens,
+                position,
+                term_list,
             )
         else:
             terms_ctx = {
@@ -324,7 +336,9 @@ class TextHighlighter:
                 "final_splited_text": final_splited_text,
             }
             position, new_expression = self._process_relevant_terms_helper(
-                text_tokens, position, terms_ctx
+                text_tokens,
+                position,
+                terms_ctx,
             )
 
         return position, new_expression
@@ -343,7 +357,9 @@ class TextHighlighter:
             kw_dict: Dictionary containing 'kw_list' and 'splited_n_gram_kw_list'
         """
         ngram_result = self._find_more_relevant_helper(
-            position, text_tokens, relevant_words_array
+            position,
+            text_tokens,
+            relevant_words_array,
         )
         new_kw_list, new_split_list = ngram_result
         kw_dict["kw_list"].extend(new_kw_list)
@@ -390,7 +406,9 @@ class TextHighlighter:
                 print(f"Error: {e}")
                 term_list = [temporal_kw]
                 position, new_expression = self.replace_token(
-                    text_tokens, position, term_list
+                    text_tokens,
+                    position,
+                    term_list,
                 )
         else:
             nonrelevant_ctx = {
@@ -399,7 +417,9 @@ class TextHighlighter:
                 "relevant_words_array": relevant_words_array,
             }
             position, new_expression = self._handle_nonrelevant_temporal_keyword(
-                text_tokens, position, nonrelevant_ctx
+                text_tokens,
+                position,
+                nonrelevant_ctx,
             )
 
         return position, new_expression
@@ -440,12 +460,16 @@ class TextHighlighter:
             del final_splited_text[-1]
             position -= 1
             position, new_expression = self.replace_token(
-                text_tokens, position, term_list
+                text_tokens,
+                position,
+                term_list,
             )
         else:
             term_list = [temporal_kw]
             position, new_expression = self.replace_token(
-                text_tokens, position, term_list
+                text_tokens,
+                position,
+                term_list,
             )
 
         return position, new_expression
